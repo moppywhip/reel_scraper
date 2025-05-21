@@ -1,0 +1,4 @@
+# Ignore downloaded reels and virtual environments
+downloads/
+.venv/
+__pycache__/

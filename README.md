@@ -56,3 +56,14 @@ Where:
 
 - Instagram rate limits requests, so don't download too many videos at once
 - Some reels may not be downloadable due to privacy settings
+
+### Analyze Reels
+
+Once reels are downloaded you can analyze them with Gemini 2.5 Flash:
+
+```bash
+python analyze_reels.py downloads
+```
+
+This creates an `analysis.json` file inside each `reel_<id>` folder with the
+extracted entries.
