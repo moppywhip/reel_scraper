@@ -120,26 +120,23 @@ def process_row(row: dict[str, str]) -> dict[str, str]:
 
 # ------------------------------- main -------------------------------- #
 
-def main() -> None:
+def run(csv_file: str, out: str | None = None, workers: int | None = None) -> None:
+    """Label attractions in *csv_file* and write the results."""
     load_dotenv()
 
-    parser = argparse.ArgumentParser(description="Label attractions with a category.")
-    parser.add_argument("csv_file", help="Source CSV (must have columns name, description)")
-    parser.add_argument("-o", "--out", default=None, help="Destination CSV")
-    parser.add_argument("-w", "--workers", type=int, default=max(1, cpu_count() // 2))
-    args = parser.parse_args()
+    workers = workers or max(1, cpu_count() // 2)
 
-    src = Path(args.csv_file)
-    dst = Path(args.out) if args.out else src.with_name(src.stem + "_labeled.csv")
+    src = Path(csv_file)
+    dst = Path(out) if out else src.with_name(src.stem + "_labeled.csv")
 
     rows: list[dict[str, str]]
     with src.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
 
-    print(f"Processing {len(rows)} rows with {args.workers} workers …")
+    print(f"Processing {len(rows)} rows with {workers} workers …")
 
-    with Pool(processes=args.workers) as pool:
+    with Pool(processes=workers) as pool:
         rows = pool.map(process_row, rows)
 
     fieldnames = list(rows[0].keys())
@@ -152,6 +149,16 @@ def main() -> None:
         writer.writerows(rows)
 
     print(f"✓ Labeled CSV written to {dst}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Label attractions with a category.")
+    parser.add_argument("csv_file", help="Source CSV (must have columns name, description)")
+    parser.add_argument("-o", "--out", default=None, help="Destination CSV")
+    parser.add_argument("-w", "--workers", type=int, default=None)
+    args = parser.parse_args()
+
+    run(args.csv_file, args.out, args.workers)
 
 
 if __name__ == "__main__":

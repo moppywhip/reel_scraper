@@ -40,6 +40,13 @@ def json_to_csv(json_path: Path, csv_path: Path) -> None:
     print(f"✓ Wrote {len(data)} rows to {csv_path}")
 
 
+def run(json_file: str, output: str | None = None) -> None:
+    """Convert *json_file* (array of objects) to CSV."""
+    json_path = Path(json_file)
+    csv_path = Path(output) if output else json_path.with_suffix(".csv")
+    json_to_csv(json_path, csv_path)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Convert JSON array to CSV.")
     parser.add_argument("json_file", help="Path to the source JSON file.")
@@ -50,10 +57,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    json_path = Path(args.json_file)
-    csv_path = Path(args.output) if args.output else json_path.with_suffix(".csv")
-
-    json_to_csv(json_path, csv_path)
+    run(args.json_file, args.output)
 
 
 if __name__ == "__main__":

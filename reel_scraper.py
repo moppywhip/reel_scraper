@@ -6,6 +6,7 @@ import re
 import sys
 import time
 import random
+import argparse
 from urllib.parse import urlparse, parse_qs
 
 def extract_reel_links(json_file):
@@ -317,28 +318,16 @@ def download_reel(reel_info, output_dir='downloads', reels_db=None, retry_count=
         
         return False
 
-def main():
-    # Set up argument parsing
-    if len(sys.argv) < 2:
-        print("Usage: python reel_scraper.py <message_file.json> [output_directory]")
-        print("Using default: consolidated_messages.json")
-        message_file = "consolidated_messages.json"
-    else:
-        message_file = sys.argv[1]
-    
-    # Set output directory
-    output_dir = "downloads"
-    if len(sys.argv) >= 3:
-        output_dir = sys.argv[2]
-    
+def run(message_file: str = "consolidated_messages.json", output_dir: str = "downloads") -> None:
+    """Download reels referenced in *message_file* into *output_dir*."""
+
     # Load database of previously downloaded reels
     reels_db = load_downloaded_reels(output_dir)
     print(f"Found {len(reels_db)} previously downloaded reels")
-    
+
     # Extract links
     print(f"Processing {message_file}...")
     reels, url_to_indices = extract_reel_links(message_file)
-    
     if not reels:
         print("No reels found.")
         return
@@ -467,6 +456,24 @@ def prune_messages_by_url(src_path: str, base_url: str):
         )
     except Exception as err:
         print(f"Error pruning messages for url {base_url}: {err}")
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Download reels from messages")
+    parser.add_argument(
+        "message_file",
+        nargs="?",
+        default="consolidated_messages.json",
+        help="Path to the consolidated Messenger JSON file",
+    )
+    parser.add_argument(
+        "output_dir",
+        nargs="?",
+        default="downloads",
+        help="Directory where reels will be saved",
+    )
+    args = parser.parse_args()
+    run(args.message_file, args.output_dir)
+
 
 if __name__ == "__main__":
     main()

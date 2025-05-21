@@ -48,7 +48,8 @@ def collect_entries(path_str: str) -> List[Dict[str, Any]]:
     return entries
 
 
-def main() -> None:
+def run() -> None:
+    """Combine hard-coded attraction shards into one file."""
     aggregated: List[Dict[str, Any]] = []
     for file in FILES:
         print(f"Reading {file}")
@@ -56,6 +57,10 @@ def main() -> None:
 
     OUTPUT.write_text(json.dumps(aggregated, ensure_ascii=False, indent=2))
     print(f"\n✅ Wrote {len(aggregated)} combined entries to {OUTPUT}")
+
+
+def main() -> None:
+    run()
 
 
 if __name__ == "__main__":
