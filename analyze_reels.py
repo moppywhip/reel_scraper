@@ -112,7 +112,11 @@ def analyze_directory(downloads_dir: Path) -> None:
             analyze_reel(child)
 
 
-if __name__ == "__main__":
+def run(downloads_dir: str = "downloads") -> None:
+    analyze_directory(Path(downloads_dir))
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze downloaded reels")
     parser.add_argument(
         "downloads_dir",
@@ -121,4 +125,8 @@ if __name__ == "__main__":
         help="Path to the downloads directory",
     )
     args = parser.parse_args()
-    analyze_directory(Path(args.downloads_dir))
+    run(args.downloads_dir)
+
+
+if __name__ == "__main__":
+    main()

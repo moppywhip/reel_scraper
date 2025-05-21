@@ -1,6 +1,6 @@
 # Reel Scraper
 
-A tool to download Instagram reels from Messenger chat export files.
+A command line tool to download and analyze Instagram reels shared in Messenger chat exports.
 
 ## Setup
 
@@ -17,33 +17,29 @@ source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
 
+When your uv virtual environment is active, run the CLI like so:
+
+```bash
+uv python reels.py <command>
+```
+
 ## Usage
 
 ### Consolidate Message Files
 
-If you have multiple message JSON files from Messenger exports, you can consolidate them first:
+Combine multiple Messenger export files into one JSON:
 
 ```bash
-python consolidate_messages.py consolidated_messages.json message_1.json message_2.json
+python reels.py consolidate consolidated.json messages/*.json
 ```
 
 ### Download Reels
 
-To download all reels from the consolidated messages file:
+Download all reels referenced in your consolidated messages file:
 
 ```bash
-./download_reels.sh
+python reels.py download consolidated.json downloads
 ```
-
-Or run the Python script directly:
-
-```bash
-python reel_scraper.py consolidated_messages.json downloads
-```
-
-Where:
-- First argument: The input JSON message file
-- Second argument (optional): The output directory (defaults to "downloads")
 
 ## How it Works
 
@@ -59,11 +55,19 @@ Where:
 
 ### Analyze Reels
 
-Once reels are downloaded you can analyze them with Gemini 2.5 Flash:
+After downloading, analyze the reels with Gemini:
 
 ```bash
-python analyze_reels.py downloads
+python reels.py analyze downloads
 ```
 
-This creates an `analysis.json` file inside each `reel_<id>` folder with the
-extracted entries.
+Each `reel_<id>` folder will contain an `analysis.json` file with the extracted entries.
+
+### Other Commands
+
+``reels.py`` also exposes a few helper subcommands:
+
+- ``categorize`` – label attractions in a CSV file using Gemini
+- ``aggregate`` – merge attraction JSONL shards into one file
+- ``csv`` – convert a JSON array of objects to CSV
+- ``reset-analysis`` – remove all ``analysis.json`` files so analysis can be rerun

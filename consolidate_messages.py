@@ -48,12 +48,20 @@ def consolidate_messages(file_paths, output_path):
     print(f"Consolidated {len(all_messages)} messages from {len(file_paths)} files")
     print(f"Output saved to {output_path}")
 
-if __name__ == "__main__":
+def run(output_path: str, input_paths: list[str]) -> None:
+    consolidate_messages(input_paths, output_path)
+
+
+def main() -> None:
     if len(sys.argv) < 3:
         print("Usage: consolidate_messages.py <output_file> <input_file1> <input_file2> ...")
         sys.exit(1)
-    
+
     output_path = sys.argv[1]
     input_paths = sys.argv[2:]
-    
+
     consolidate_messages(input_paths, output_path)
+
+
+if __name__ == "__main__":
+    main()

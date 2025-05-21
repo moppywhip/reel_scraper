@@ -36,6 +36,16 @@ def delete_analysis_files(root: Path) -> int:
     return count
 
 
+def run(downloads_dir: str = "downloads") -> None:
+    """Delete all ``analysis.json`` files below ``downloads_dir``."""
+    root = Path(downloads_dir)
+    if not root.exists() or not root.is_dir():
+        raise FileNotFoundError(f"Directory not found: {root}")
+
+    total = delete_analysis_files(root)
+    print(f"Deleted {total} analysis.json file(s).")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Delete all analysis.json files so analysis can be rerun."
@@ -48,12 +58,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    root = Path(args.downloads_dir)
-    if not root.exists() or not root.is_dir():
-        parser.error(f"Directory not found: {root}")
-
-    total = delete_analysis_files(root)
-    print(f"Deleted {total} analysis.json file(s).")
+    run(args.downloads_dir)
 
 
 if __name__ == "__main__":
